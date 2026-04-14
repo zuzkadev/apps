@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Deutsch mit Max 🇩🇪</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --wa-dark:      #075E54;
+  --wa-mid:       #128C7E;
+  --wa-green:     #25D366;
+  --wa-out:       #DCF8C6;
+  --wa-chat-bg:   #EDE8DC;
+  --wa-input-bg:  #F0F2F5;
+  --wa-white:     #FFFFFF;
+  --wa-text:      #111B21;
+  --wa-muted:     #667781;
+  --wa-border:    #E9EDEF;
+  --amber:        #F59E0B;
+  --amber-light:  #FEF3C7;
+  --amber-dark:   #78350F;
+  --font: 'DM Sans', system-ui, sans-serif;
+  --br-bubble: 7.5px;
+}
+
+body {
+  font-family: var(--font);
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shell {
+  width: 100%;
+  max-width: 430px;
+  height: 100svh;
+  max-height: 820px;
+  background: var(--wa-white);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--wa-dark);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--wa-mid);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+
+.header-info { flex: 1; }
+.header-name { font-size: 16px; font-weight: 600; color: white; }
+.header-sub  { font-size: 12px; color: rgba(255,255,255,0.65); }
+
+.hdr-badge {
+  background: rgba(255,255,255,0.18);
+  color: white;
+  font-size: 12px; font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ── SCREENS ── */
+.screen { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.screen.hidden { display: none; }
+
+/* ═══════════════ HOME ═══════════════ */
+.home-body {
+  flex: 1; overflow-y: auto;
+  background: var(--wa-chat-bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 24px; padding: 28px 24px; padding-top: 40px;
+}
+
+.hero { text-align: center; }
+.hero-icon {
+  width: 80px; height: 80px;
+  border-radius: 50%; background: var(--wa-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 38px; margin: 0 auto 16px;
+  box-shadow: 0 8px 24px rgba(7,94,84,0.35);
+}
+.hero h1 { font-size: 24px; font-weight: 700; color: var(--wa-text); margin-bottom: 8px; }
+.hero p  { font-size: 14px; color: var(--wa-muted); line-height: 1.65; }
+
+.week-card {
+  background: var(--wa-white);
+  border-radius: 16px;
+  padding: 16px 20px;
+  width: 100%; max-width: 320px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.wk-label {
+  font-size: 11px; font-weight: 600;
+  color: var(--wa-muted); text-transform: uppercase;
+  letter-spacing: 0.8px; margin-bottom: 12px;
+}
+.wk-days { display: flex; gap: 8px; justify-content: center; }
+.wk-day  { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.wk-dot  {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+}
+.wk-dot.done   { background: var(--wa-green); color: white; }
+.wk-dot.today  { background: var(--wa-dark);  color: white; box-shadow: 0 0 0 3px rgba(7,94,84,0.25); }
+.wk-dot.future { background: #E9EDEF; color: #AEBAC1; }
+.wk-name { font-size: 10px; color: var(--wa-muted); font-weight: 500; }
+
+.info-box {
+  background: var(--wa-white);
+  border-radius: 12px;
+  padding: 13px 18px;
+  width: 100%; max-width: 320px;
+  font-size: 13px; color: var(--wa-text);
+  line-height: 1.6; text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.info-box.ok   { background: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
+.info-box.full { background: #DBEAFE; color: #1E40AF; border: 1px solid #BFDBFE; }
+
+.notif-box {
+  width: 100%; max-width: 320px;
+  background: var(--wa-white);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+.notif-label {
+  font-size: 12px; font-weight: 600;
+  color: var(--wa-muted); text-transform: uppercase;
+  letter-spacing: 0.7px; margin-bottom: 10px;
+}
+.notif-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+#notif-time {
+  border: 1.5px solid var(--wa-border); border-radius: 10px;
+  padding: 8px 11px; font-size: 14px; font-family: var(--font);
+  color: var(--wa-text); outline: none; background: #FAFAFA;
+  transition: border-color 0.2s; flex: 1;
+}
+#notif-time:focus { border-color: var(--wa-mid); }
+.notif-toggle-btn {
+  position: relative; width: 44px; height: 24px; flex-shrink: 0;
+  background: #AEBAC1; border-radius: 24px; cursor: pointer;
+  transition: background 0.2s;
+}
+.notif-toggle-btn::before {
+  content: ''; position: absolute;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: white; left: 3px; top: 3px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.notif-toggle-btn.on { background: var(--wa-green); }
+.notif-toggle-btn.on::before { transform: translateX(20px); }
+.notif-hint { font-size: 12px; color: var(--wa-muted); line-height: 1.5; margin-top: 4px; }
+.notif-hint.ok  { color: #166534; }
+.notif-hint.bad { color: #DC2626; }
+
+.api-box {
+  width: 100%; max-width: 320px;
+  background: var(--wa-white);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+.api-label {
+  font-size: 12px; font-weight: 600;
+  color: var(--wa-muted); text-transform: uppercase;
+  letter-spacing: 0.7px; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.api-row { display: flex; gap: 8px; align-items: center; }
+#api-key-input {
+  flex: 1; border: 1.5px solid var(--wa-border);
+  border-radius: 10px; padding: 9px 12px;
+  font-size: 13px; font-family: var(--font);
+  color: var(--wa-text); outline: none;
+  transition: border-color 0.2s;
+  background: #FAFAFA;
+  letter-spacing: 0.5px;
+}
+#api-key-input:focus { border-color: var(--wa-mid); }
+#api-key-input.ok   { border-color: var(--wa-green); }
+#api-key-input.err  { border-color: #DC2626; }
+.api-hint {
+  font-size: 11.5px; color: var(--wa-muted);
+  margin-top: 7px; line-height: 1.5;
+}
+.api-hint a { color: var(--wa-dark); }
+.eye-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--wa-muted); padding: 6px; border-radius: 6px;
+  font-size: 16px; flex-shrink: 0;
+  transition: color 0.15s;
+}
+.eye-btn:hover { color: var(--wa-dark); }
+
+.btn-start {
+  background: var(--wa-dark); color: white;
+  border: none; border-radius: 50px;
+  padding: 15px 40px;
+  font-size: 16px; font-weight: 600;
+  cursor: pointer; font-family: var(--font);
+  transition: all 0.2s ease;
+  box-shadow: 0 6px 20px rgba(7,94,84,0.35);
+  letter-spacing: 0.2px;
+}
+.btn-start:hover:not(:disabled) {
+  background: var(--wa-mid);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(7,94,84,0.4);
+}
+.btn-start:disabled { background: #AEBAC1; box-shadow: none; cursor: not-allowed; }
+
+/* ═══════════════ CHAT ═══════════════ */
+.chat-msgs {
+  flex: 1; overflow-y: auto;
+  padding: 10px;
+  background: var(--wa-chat-bg);
+  background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.055) 1px, transparent 0);
+  background-size: 22px 22px;
+  display: flex; flex-direction: column;
+  gap: 3px;
+}
+
+.divider { text-align: center; margin: 10px 0 5px; }
+.divider span {
+  font-size: 11.5px;
+  background: rgba(255,255,255,0.85);
+  color: var(--wa-muted);
+  padding: 4px 12px; border-radius: 10px;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+.msg-wrap { display: flex; flex-direction: column; margin: 1px 0; }
+.msg-wrap.in  { align-items: flex-start; }
+.msg-wrap.out { align-items: flex-end; }
+
+.bubble {
+  max-width: 78%;
+  padding: 6px 10px 5px;
+  border-radius: var(--br-bubble);
+  font-size: 14.5px; line-height: 1.52;
+  word-break: break-word; white-space: pre-wrap;
+  box-shadow: 0 1px 0.5px rgba(11,20,26,0.13);
+  animation: fadeUp 0.2s ease;
+}
+.bubble.in  { background: var(--wa-white); color: var(--wa-text); border-top-left-radius: 2px; }
+.bubble.out { background: var(--wa-out);   color: var(--wa-text); border-top-right-radius: 2px; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+.btime {
+  font-size: 11px; color: var(--wa-muted);
+  float: right; margin: 2px 0 0 8px; line-height: 1;
+}
+.checks { color: #53BDEB; font-size: 13px; margin-left: 2px; }
+
+/* Typing indicator */
+.typing-wrap { display: flex; align-items: flex-start; }
+.typing-bub {
+  background: var(--wa-white);
+  border-radius: var(--br-bubble);
+  border-top-left-radius: 2px;
+  padding: 10px 14px;
+  display: flex; gap: 4px; align-items: center;
+  box-shadow: 0 1px 0.5px rgba(11,20,26,0.13);
+}
+.tdot {
+  width: 7px; height: 7px;
+  background: #AEBAC1; border-radius: 50%;
+  animation: td 1.4s ease-in-out infinite;
+}
+.tdot:nth-child(2) { animation-delay: 0.2s; }
+.tdot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes td {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30%           { transform: translateY(-5px); opacity: 1; }
+}
+
+/* Correction card */
+.correction {
+  max-width: 84%;
+  align-self: flex-end;
+  background: var(--amber-light);
+  border-left: 3px solid var(--amber);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 2px 0 4px;
+  font-size: 13px; line-height: 1.55;
+  animation: fadeUp 0.3s ease;
+}
+.corr-hdr {
+  font-size: 11px; font-weight: 700;
+  color: var(--amber); text-transform: uppercase;
+  letter-spacing: 0.6px; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 5px;
+}
+.corr-item { margin-bottom: 8px; }
+.corr-item:last-child { margin-bottom: 0; }
+.c-wrong { color: #DC2626; text-decoration: line-through; font-weight: 500; }
+.c-arr   { color: var(--wa-muted); margin: 0 4px; }
+.c-right { color: #166534; font-weight: 600; }
+.c-why   { font-size: 12px; color: var(--amber-dark); font-style: italic; margin-top: 3px; }
+
+/* Minor corrections — subtle blue */
+.corr-item.minor .c-wrong { color: #6B7280; text-decoration: underline wavy #93C5FD; text-decoration-skip-ink: none; }
+.corr-item.minor .c-right { color: #1D4ED8; }
+.corr-item.minor .c-why   { color: #3B82F6; }
+.corr-item.minor .c-badge {
+  display: inline-block; font-size: 10px; font-weight: 600;
+  background: #DBEAFE; color: #1D4ED8;
+  padding: 1px 6px; border-radius: 20px; margin-left: 4px;
+  vertical-align: middle; letter-spacing: 0.3px;
+}
+/* Major corrections — red as before, with badge */
+.corr-item.major .c-badge {
+  display: inline-block; font-size: 10px; font-weight: 600;
+  background: #FEE2E2; color: #B91C1C;
+  padding: 1px 6px; border-radius: 20px; margin-left: 4px;
+  vertical-align: middle; letter-spacing: 0.3px;
+}
+
+.perfect {
+  align-self: flex-end;
+  background: #DCFCE7;
+  color: #166534;
+  font-size: 12px; font-weight: 600;
+  padding: 4px 12px; border-radius: 20px;
+  margin: 2px 0 4px;
+  animation: fadeUp 0.25s ease;
+}
+
+/* ── INPUT BAR ── */
+.input-bar {
+  background: var(--wa-input-bg);
+  padding: 8px 10px;
+  display: flex; align-items: flex-end;
+  gap: 8px; flex-shrink: 0;
+  border-top: 1px solid var(--wa-border);
+}
+
+#txt {
+  flex: 1;
+  background: var(--wa-white);
+  border: none; border-radius: 22px;
+  padding: 9px 14px;
+  font-size: 15px; font-family: var(--font);
+  color: var(--wa-text); resize: none; outline: none;
+  min-height: 42px; max-height: 100px;
+  line-height: 1.4; overflow-y: auto;
+}
+#txt::placeholder { color: #AEBAC1; }
+#txt:disabled { background: #F0F2F5; color: #AEBAC1; }
+
+.send-btn {
+  width: 42px; height: 42px;
+  background: var(--wa-dark); border: none;
+  border-radius: 50%; color: white;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background 0.15s;
+}
+.send-btn:hover:not(:disabled) { background: var(--wa-mid); }
+.send-btn:disabled { background: #AEBAC1; cursor: not-allowed; }
+
+/* ═══════════════ DONE ═══════════════ */
+.done-body {
+  flex: 1; background: var(--wa-chat-bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 28px 24px; gap: 20px; text-align: center;
+}
+.done-icon { font-size: 64px; animation: pop 0.5s ease; }
+@keyframes pop { 0% { transform: scale(0.4); } 75% { transform: scale(1.12); } 100% { transform: scale(1); } }
+
+.done-title { font-size: 24px; font-weight: 700; color: var(--wa-text); }
+.done-msg   { font-size: 14px; color: var(--wa-muted); line-height: 1.65; max-width: 280px; }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 280px; }
+.stat  {
+  background: var(--wa-white); border-radius: 14px;
+  padding: 14px; text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.stat-n { font-size: 30px; font-weight: 700; color: var(--wa-dark); }
+.stat-l { font-size: 11px; color: var(--wa-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+.btn-back {
+  background: var(--wa-dark); color: white;
+  border: none; border-radius: 50px;
+  padding: 13px 32px; font-size: 15px; font-weight: 600;
+  cursor: pointer; font-family: var(--font);
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(7,94,84,0.3);
+}
+.btn-back:hover { background: var(--wa-mid); }
+
+/* ═══════════════ HISTORY ═══════════════ */
+.hist-body {
+  flex: 1; overflow-y: auto;
+  background: var(--wa-chat-bg);
+  padding: 12px 10px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.hist-session {
+  background: var(--wa-white);
+  border-radius: 14px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+}
+.hist-session-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; cursor: pointer;
+  border-bottom: 1px solid var(--wa-border);
+  user-select: none;
+  position: sticky; top: 0; z-index: 2;
+  background: var(--wa-white);
+  border-radius: 14px 14px 0 0;
+}
+.hist-session-hdr.perfect { cursor: default; }
+.hist-perfect-msg {
+  padding: 16px 14px; text-align: center;
+  font-size: 22px; letter-spacing: 2px;
+}
+.hist-perfect-sub {
+  text-align: center; font-size: 13px;
+  color: var(--wa-muted); padding: 0 14px 14px;
+}
+.hist-date { font-size: 14px; font-weight: 600; color: var(--wa-text); }
+.hist-meta { font-size: 12px; color: var(--wa-muted); margin-top: 2px; }
+.hist-badge-ok  { background: #DCFCE7; color: #166534; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.hist-badge-err { background: #FEE2E2; color: #B91C1C; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.hist-body-inner { padding: 10px 12px; display: none; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto; border-radius: 0 0 14px 14px; }
+.hist-body-inner.open { display: flex; }
+.hist-msg-wrap { display: flex; flex-direction: column; }
+.hist-msg-wrap.in  { align-items: flex-start; }
+.hist-msg-wrap.out { align-items: flex-end; }
+.hist-bubble {
+  max-width: 80%; padding: 7px 11px;
+  border-radius: 10px; font-size: 13px; line-height: 1.5;
+  word-break: break-word; white-space: pre-wrap;
+}
+.hist-bubble.in  { background: #F0F2F5; color: var(--wa-text); }
+.hist-bubble.out { background: var(--wa-out); color: var(--wa-text); }
+.hist-corr {
+  align-self: flex-end; max-width: 84%;
+  background: var(--amber-light); border-left: 3px solid var(--amber);
+  border-radius: 8px; padding: 8px 11px;
+  font-size: 12px; line-height: 1.5;
+}
+.hist-corr.only-minor { background: #EFF6FF; border-left-color: #3B82F6; }
+.hist-corr-hdr { font-size: 10px; font-weight: 700; color: var(--amber); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.hist-corr.only-minor .hist-corr-hdr { color: #3B82F6; }
+.hist-ci { margin-bottom: 5px; }
+.hist-ci:last-child { margin-bottom: 0; }
+.hist-ci .hw { color: #DC2626; text-decoration: line-through; }
+.hist-ci.minor .hw { color: #6B7280; text-decoration: underline wavy #93C5FD; }
+.hist-ci .hr { color: #166534; font-weight: 600; margin-left: 4px; }
+.hist-ci.minor .hr { color: #1D4ED8; }
+.hist-ci .he { font-size: 11px; color: var(--amber-dark); font-style: italic; margin-top: 2px; }
+.hist-ci.minor .he { color: #3B82F6; }
+.hist-empty { text-align: center; color: var(--wa-muted); font-size: 14px; padding: 40px 20px; }
+.btn-hist {
+  background: none; border: 1.5px solid rgba(255,255,255,0.4);
+  color: white; border-radius: 20px; padding: 5px 14px;
+  font-size: 12px; font-weight: 600; cursor: pointer; font-family: var(--font);
+  transition: background 0.15s;
+}
+.btn-hist:hover { background: rgba(255,255,255,0.15); }
+
+mark.diff-wrong {
+  background: #FECACA; color: #B91C1C;
+  border-radius: 3px; padding: 0 2px;
+  font-style: normal; text-decoration: none;
+}
+mark.diff-right {
+  background: #BBF7D0; color: #166534;
+  border-radius: 3px; padding: 0 2px;
+  font-style: normal;
+}
+
+.corr-item-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 5px; }
+.btn-wrong-corr {
+  background: none; border: 1px solid #D1D5DB; border-radius: 20px;
+  font-size: 11px; color: #9CA3AF; padding: 2px 10px;
+  cursor: pointer; font-family: var(--font); transition: all 0.15s;
+}
+.btn-wrong-corr:hover { border-color: #DC2626; color: #DC2626; background: #FEF2F2; }
+.btn-wrong-corr.dismissed { border-color: #D1FAE5; color: #6EE7B7; background: #F0FDF4; cursor: default; }
+.corr-item.dismissed { opacity: 0.45; }
+
+.err-bubble { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+
+.bubble.err { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+
+.bubble-retry {
+  display: inline-block; margin-top: 8px;
+  background: var(--wa-dark); color: white;
+  border: none; border-radius: 20px;
+  padding: 6px 16px; font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: var(--font);
+  transition: background 0.15s;
+}
+.bubble-retry:hover { background: var(--wa-mid); }
+
+.retry-btn {
+  display: inline-block; margin-top: 8px;
+  background: var(--wa-dark); color: white;
+  border: none; border-radius: 20px;
+  padding: 7px 18px; font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: var(--font);
+  transition: background 0.15s;
+}
+.retry-btn:hover { background: var(--wa-mid); }
+
+.err-bubble { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+
+.err-bubble { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.btn-retry {
+  background: var(--wa-dark); color: white; border: none;
+  border-radius: 20px; padding: 7px 18px; font-size: 13px;
+  font-weight: 600; font-family: var(--font); cursor: pointer;
+  transition: background 0.15s; margin-top: 6px;
+}
+.btn-retry:hover { background: var(--wa-mid); }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- HEADER (always visible) -->
+  <div class="header">
+    <div class="avatar">🧑‍🏫</div>
+    <div class="header-info">
+      <div class="header-name">Max</div>
+      <div class="header-sub" id="hdr-sub">Deutsch-Partner</div>
+    </div>
+    <div class="hdr-badge" id="hdr-badge">0 / 5</div>
+    <button class="btn-hist" id="btn-hist" onclick="histBtnClick()">Verlauf</button>
+  </div>
+
+  <!-- ═══ HOME ═══ -->
+  <div id="s-home" class="screen">
+    <div class="home-body">
+      <div class="hero">
+        <div class="hero-icon">🇩🇪</div>
+        <h1>Deutsch mit Max</h1>
+        <p>5 Gespräche pro Woche · 5 Runden pro Gespräch<br>Max schreibt auf Deutsch — du antwortest!<br>Fehler werden sofort korrigiert. 📝</p>
+      </div>
+
+      <div class="week-card">
+        <div class="wk-label">Diese Woche</div>
+        <div class="wk-days" id="wk-days"></div>
+      </div>
+
+      <div class="notif-box">
+        <div class="notif-label">🔔 Tägliche Erinnerung</div>
+        <div class="notif-row">
+          <input type="time" id="notif-time" value="09:00" onchange="saveNotifTime()">
+          <div class="notif-toggle-btn" id="notif-on" role="switch" onclick="toggleNotif()"></div>
+        </div>
+        <div class="notif-hint" id="notif-hint">Einschalten für tägliche Erinnerungen (Mo–Fr).</div>
+      </div>
+
+      <div class="api-box">
+        <div class="api-label">🔑 OpenRouter API-Schlüssel</div>
+        <div class="api-row">
+          <input type="password" id="api-key-input" placeholder="sk-or-v1-…" spellcheck="false" autocomplete="off" oninput="onKeyInput()">
+          <button class="eye-btn" onclick="toggleEye()" id="eye-btn">👁</button>
+        </div>
+        <div class="api-hint">Kostenloser Schlüssel auf <a href="https://openrouter.ai/settings/keys" target="_blank">openrouter.ai/settings/keys</a>. Wird nur lokal gespeichert.</div>
+      </div>
+
+      <div id="home-info"></div>
+      <button class="btn-start" id="btn-start" onclick="startSession()">Gespräch starten →</button>
+    </div>
+  </div>
+
+  <!-- ═══ CHAT ═══ -->
+  <div id="s-chat" class="screen hidden">
+    <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="input-bar">
+      <textarea id="txt" rows="1" placeholder="Schreib auf Deutsch…" disabled></textarea>
+      <button class="send-btn" id="btn-send" disabled onclick="sendMsg()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ DONE ═══ -->
+  <div id="s-done" class="screen hidden">
+    <div class="done-body">
+      <div class="done-icon">🎉</div>
+      <div class="done-title">Gut gemacht!</div>
+      <div class="done-msg" id="done-msg">Du hast alle 5 Runden auf Deutsch abgeschlossen!</div>
+      <div class="stats">
+        <div class="stat"><div class="stat-n" id="s-err">0</div><div class="stat-l">Fehler</div></div>
+        <div class="stat"><div class="stat-n" id="s-wk">1</div><div class="stat-l">Diese Woche</div></div>
+      </div>
+      <button class="btn-back" onclick="goHome()">← Zurück</button>
+    </div>
+  </div>
+
+
+  <!-- ═══ HISTORY ═══ -->
+  <div id="s-hist" class="screen hidden">
+    <div class="hist-body" id="hist-body"></div>
+  </div>
+</div>
+
+<script type="module">
+
+// ═══════════════════════════════════════════════════
+//  STORE
+// ═══════════════════════════════════════════════════
+const SK = 'dmm_v1';
+let store = (() => { try { return JSON.parse(localStorage.getItem(SK)) || { sessions:[] }; } catch { return { sessions:[] }; } })();
+const save = () => localStorage.setItem(SK, JSON.stringify(store));
+
+// API key
+let apiKey = localStorage.getItem('dmm_key') || '';
+// key cleanup removed — accept any non-empty key
+
+window.onKeyInput = () => {
+  apiKey = document.getElementById('api-key-input').value.trim();
+  localStorage.setItem('dmm_key', apiKey);
+  updateStartBtn();
+};
+window.toggleEye = () => {
+  const inp = document.getElementById('api-key-input');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+};
+
+// Active conversation state
+let ch = { round:0, log:[], errors:0, busy:false, corrections:[] };
+
+// ═══════════════════════════════════════════════════
+//  WEEK HELPERS
+// ═══════════════════════════════════════════════════
+function weekStart() {
+  const d = new Date(); const day = d.getDay();
+  const mon = new Date(d);
+  mon.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
+  mon.setHours(0,0,0,0); return mon;
+}
+function weekSessions() {
+  const ws = weekStart(); const we = new Date(ws); we.setDate(we.getDate() + 7);
+  return store.sessions.filter(s => { const d = new Date(s.ts); return d >= ws && d < we; });
+}
+function doneToday() {
+  const t = new Date().toDateString();
+  return store.sessions.some(s => new Date(s.ts).toDateString() === t);
+}
+const hhmm = () => new Date().toLocaleTimeString('de-DE', { hour:'2-digit', minute:'2-digit' });
+
+// ═══════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════
+function show(id) {
+  ['s-home','s-chat','s-done','s-hist'].forEach(s =>
+    document.getElementById(s).classList.toggle('hidden', s !== id));
+}
+window.goHome = () => {
+  renderHome();
+  document.getElementById('hdr-badge').style.display = '';
+  const btn = document.getElementById('btn-hist');
+  if (btn) { btn.textContent = 'Verlauf'; btn.dataset.mode = 'hist'; }
+  show('s-home');
+};
+
+// ═══════════════════════════════════════════════════
+//  HOME
+// ═══════════════════════════════════════════════════
+function updateStartBtn() {
+  const wn = weekSessions(); const n = wn.length; const done = doneToday();
+  const hasKey = apiKey.length > 20;
+  const btnEl = document.getElementById('btn-start');
+  if (n >= 5) { btnEl.disabled = true; btnEl.textContent = 'Nächste Woche'; }
+  else if (done) { btnEl.disabled = true; btnEl.textContent = 'Morgen wieder'; }
+  else { btnEl.disabled = !hasKey; btnEl.textContent = hasKey ? 'Gespräch starten →' : 'API-Schlüssel eingeben…'; }
+}
+
+function renderHome() {
+  const ws = weekSessions(); const n = ws.length; const done = doneToday();
+  document.getElementById('hdr-badge').textContent = `${n} / 5`;
+  document.getElementById('hdr-sub').textContent   = 'Deutsch-Partner';
+  renderNotifBox();
+
+  // Pre-fill saved key
+  if (apiKey) document.getElementById('api-key-input').value = apiKey;
+
+  // Week dots Mon–Fri
+  const days = ['Mo','Di','Mi','Do','Fr'];
+  const mon  = weekStart();
+  const todayStr = new Date().toDateString();
+  const dotsEl = document.getElementById('wk-days');
+  dotsEl.innerHTML = days.map((d, i) => {
+    const dd = new Date(mon); dd.setDate(mon.getDate() + i);
+    const ds = dd.toDateString();
+    const isDone  = ws.some(s => new Date(s.ts).toDateString() === ds);
+    const isToday = ds === todayStr;
+    const cls   = isDone ? 'done' : (isToday ? 'today' : 'future');
+    const label = isDone ? '✓' : (i + 1);
+    return `<div class="wk-day"><div class="wk-dot ${cls}">${label}</div><div class="wk-name">${d}</div></div>`;
+  }).join('');
+
+  const infoEl = document.getElementById('home-info');
+  const btnEl  = document.getElementById('btn-start');
+
+  if (n >= 5) {
+    infoEl.innerHTML = '<div class="info-box full">🏆 Diese Woche komplett! Bis nächste Woche!</div>';
+  } else if (done) {
+    infoEl.innerHTML = '<div class="info-box ok">✅ Heute schon trainiert! Bis morgen!</div>';
+  } else {
+    const left = 5 - n;
+    infoEl.innerHTML = `<div class="info-box">Noch <strong>${left}</strong> Gespräch${left === 1 ? '' : 'e'} diese Woche übrig.</div>`;
+  }
+  updateStartBtn();
+}
+
+// ═══════════════════════════════════════════════════
+//  CHAT DOM HELPERS
+// ═══════════════════════════════════════════════════
+const box   = () => document.getElementById('chat-msgs');
+const esc   = s  => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const scroll= () => { const el = box(); setTimeout(()=> el.scrollTop = el.scrollHeight, 60); };
+
+function addDivider(round) {
+  const d = document.createElement('div'); d.className = 'divider';
+  d.innerHTML = `<span>Runde ${round} von 5</span>`;
+  box().appendChild(d);
+}
+
+function addBubble(text, dir) {
+  const w = document.createElement('div'); w.className = `msg-wrap ${dir}`;
+  const checks = dir === 'out' ? '<span class="checks">✓✓</span>' : '';
+  w.innerHTML = `<div class="bubble ${dir}">${esc(text)}<span class="btime">${hhmm()}${checks}</span></div>`;
+  box().appendChild(w); scroll();
+}
+
+
+function addTyping() {
+  const w = document.createElement('div'); w.className = 'msg-wrap in typing-wrap';
+  w.innerHTML = `<div class="typing-bub"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>`;
+  box().appendChild(w); scroll(); return w;
+}
+
+// Highlight differing chars between two strings
+function diffHighlight(wrong, correct, isMinor) {
+  // Find longest common prefix and suffix
+  let i = 0, j = wrong.length, k = correct.length;
+  while (i < j && i < k && wrong[i] === correct[i]) i++;
+  while (j > i && k > i && wrong[j-1] === correct[k-1]) { j--; k--; }
+  const wPre  = esc(wrong.slice(0, i));
+  const wDiff = wrong.slice(i, j);
+  const wPost = esc(wrong.slice(j));
+  const cPre  = esc(correct.slice(0, i));
+  const cDiff = correct.slice(i, k);
+  const cPost = esc(correct.slice(k));
+  const wHL = wDiff ? `<mark class="diff-wrong">${esc(wDiff)}</mark>` : '';
+  const cHL = cDiff ? `<mark class="diff-right">${esc(cDiff)}</mark>` : '';
+  return {
+    wrongHtml:   wPre + wHL + wPost,
+    correctHtml: cPre + cHL + cPost
+  };
+}
+
+function addCorrections(corrs) {
+  if (!corrs?.length) return;
+  const major = corrs.filter(c => (c.severity || 'major') === 'major');
+  const minor = corrs.filter(c => c.severity === 'minor');
+  ch.errors += major.length;
+
+  const renderItem = (c) => {
+    const sev = c.severity === 'minor' ? 'minor' : 'major';
+    const badge = sev === 'minor'
+      ? '<span class="c-badge">Kleinigkeit</span>'
+      : '<span class="c-badge">Grammatik</span>';
+    const { wrongHtml, correctHtml } = diffHighlight(c.wrong, c.correct, sev === 'minor');
+    const idx = Math.random().toString(36).slice(2);
+    return `<div class="corr-item ${sev}" id="ci-${idx}">
+      <span class="c-wrong">${wrongHtml}</span><span class="c-arr">→</span><span class="c-right">${correctHtml}</span>${badge}
+      <div class="corr-item-footer">
+        <div class="c-why">💡 ${esc(c.explanation)}</div>
+        <button class="btn-wrong-corr" id="fb-${idx}" onclick="dismissCorr('${idx}')" title="Diese Korrektur ist falsch">👎 Stimmt nicht</button>
+      </div>
+    </div>`;
+  };
+
+  const div = document.createElement('div'); div.className = 'correction';
+  const items = [...major, ...minor].map(renderItem).join('');
+  const hdr = major.length === 0 ? '✏ Kleine Korrekturen' : '✏ Korrekturen';
+  div.innerHTML = `<div class="corr-hdr">${hdr}</div>${items}`;
+  box().appendChild(div); scroll();
+}
+
+function addPerfect() {
+  const s = document.createElement('div'); s.className = 'perfect'; s.textContent = '✓ Alles richtig!';
+  box().appendChild(s); scroll();
+}
+
+function setInput(on) {
+  const t = document.getElementById('txt');
+  const b = document.getElementById('btn-send');
+  t.disabled = !on; b.disabled = !on;
+  if (on) { t.focus(); }
+}
+
+// ═══════════════════════════════════════════════════
+//  OPENROUTER API  (dynamic free models from API)
+// ═══════════════════════════════════════════════════
+
+// Fallback hardcoded list in case API fetch fails
+// ── Model list: fetched once from OpenRouter, cached for the session ──
+let cachedFreeModels = null;
+
+async function getFreeModels() {
+  if (cachedFreeModels) return cachedFreeModels;
+  try {
+    const res = await fetch('https://openrouter.ai/api/v1/models', {
+      headers: { 'Authorization': `Bearer ${apiKey}` }
+    });
+    const data = await res.json();
+    const list = (data.data || [])
+      .filter(m => m.id.endsWith(':free'))
+      .map(m => m.id);
+    if (list.length > 0) { cachedFreeModels = list; return list; }
+  } catch(e) { console.warn('Model list fetch failed, using fallback', e); }
+  // Fallback if API unreachable
+  cachedFreeModels = [
+    'qwen/qwen3-14b:free',
+    'qwen/qwen3-8b:free',
+    'meta-llama/llama-3.3-70b-instruct:free',
+    'deepseek/deepseek-chat-v3-0324:free',
+    'mistralai/devstral-small:free',
+  ];
+  return cachedFreeModels;
+}
+
+// Live status bubble shown while trying models
+let statusBubble = null;
+function setStatus(msg) {
+  if (!statusBubble) {
+    statusBubble = document.createElement('div');
+    statusBubble.className = 'msg-wrap in';
+    statusBubble.innerHTML = '<div class="bubble in" id="status-inner"></div>';
+    box()?.appendChild(statusBubble);
+  }
+  const el = document.getElementById('status-inner');
+  if (el) el.textContent = msg;
+  scroll();
+}
+function clearStatus() {
+  statusBubble?.remove();
+  statusBubble = null;
+}
+
+async function tryModel(model, system, userMsg, signal) {
+  const short = model.split('/')[1] || model;
+  setStatus(`⏳ Versuche ${short}…`);
+  let res;
+  try {
+    res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': 'https://deutsch-mit-max.app',
+        'X-Title': 'Deutsch mit Max'
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 1000,
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user',   content: userMsg }
+        ]
+      })
+    });
+  } catch(e) {
+    if (e.name === 'AbortError') throw e;
+    setStatus(`❌ ${short}: Netzwerkfehler`);
+    throw new Error('network');
+  }
+  if (res.status === 401) throw new Error('Ungültiger API-Schlüssel (401)');
+  if (res.status === 402) throw new Error('Kein Guthaben auf dem OpenRouter-Konto (402)');
+  if (!res.ok) {
+    let errDetail = '';
+    try { const d = await res.json(); errDetail = d?.error?.message || ''; } catch {}
+    setStatus(`⚠️ ${short}: ${res.status} ${errDetail.slice(0,60)}`);
+    await new Promise(r => setTimeout(r, 400)); // brief pause so user can read
+    throw new Error('skip');
+  }
+  let data;
+  try { data = await res.json(); } catch { throw new Error('skip'); }
+  const text = data.choices?.[0]?.message?.content;
+  if (!text) { setStatus(`⚠️ ${short}: leere Antwort`); throw new Error('skip'); }
+  return text;
+}
+
+async function claude(system, userMsg) {
+  const TIMEOUT_MS = 30000;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+  try {
+    const models = await getFreeModels();
+    setStatus(`🔍 Suche verfügbares Modell…`);
+    await new Promise(r => setTimeout(r, 300));
+
+    for (const model of models) {
+      if (controller.signal.aborted) break;
+      try {
+        const text = await tryModel(model, system, userMsg, controller.signal);
+        clearStatus();
+        clearTimeout(timer);
+        return text;
+      } catch(e) {
+        if (e.name === 'AbortError') break;
+        if (e.message !== 'skip' && e.message !== 'network') {
+          clearStatus(); throw e;
+        }
+      }
+    }
+  } finally {
+    clearTimeout(timer);
+  }
+
+  clearStatus();
+  if (controller.signal.aborted) {
+    throw new Error('Zeitüberschreitung (30s) — alle Modelle überlastet. Nochmal versuchen!');
+  }
+  throw new Error('Kein freies Modell verfügbar. Bitte später nochmal versuchen.');
+}
+
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+function convLog() {
+  return ch.log.map(e => `${e.r === 'max' ? 'Max' : 'Lernender'}: ${e.t}`).join('\n\n');
+}
+
+// System prompts
+const SYS_START = `Du bist Max, ein freundlicher deutschsprachiger Gesprächspartner für einen Deutschlernenden (Niveau B1).
+Starte JETZT ein natürliches Gespräch auf Deutsch. Wähle zufällig eines dieser Themen: Wetter, Hobbys, Kochen, Reisen, Wochenendpläne, Musik, Sport, Haustiere, Lieblingsfilme, Arbeit, Familie, Städte.
+Schreibe genau 2-3 kurze Sätze. Sei freundlich und stelle am Ende eine konkrete Frage.
+Antworte NUR mit deiner deutschen Nachricht. Keine Erklärungen, kein Englisch.`;
+
+function sysEval(isLast) {
+  const lastUserMsg = ch.log.filter(e => e.r === 'user').slice(-1)[0]?.t || '';
+  return `Du bist Max, freundlicher deutschsprachiger Gesprächspartner und Sprachlehrer (Lernerniveau B1).
+
+Bisheriger Gesprächsverlauf (nur zur Orientierung):
+${convLog()}
+
+Deine Aufgabe:
+1. Analysiere NUR diese exakte Nachricht des Lernenden auf Fehler:
+"${lastUserMsg}"
+Prüfe auf: Grammatik (Kasus, Artikel, Verbkonjugation, Wortstellung), Rechtschreibung, fehlende Großschreibung von Substantiven, unnatürliche Ausdrücke.
+Severity-Regel: "minor" = Kleinigkeiten (fehlendes Großbuchstabe bei Substantiven, Tippfehler, fehlendes Komma, falsches Satzzeichen). "major" = Grammatikfehler (falscher Kasus, falsche Verbform, falsche Wortstellung, falscher Artikel, fehlendes/falsches Wort).
+Das Feld "wrong" muss den EXAKTEN fehlerhaften Teilsatz aus obiger Nachricht enthalten.
+${isLast ? '' : '2. Schreibe deine nächste natürliche Gesprächsnachricht auf Deutsch (2-3 Sätze, stelle eine Frage).'}
+
+WICHTIG: Antworte NUR mit einem einzigen JSON-Objekt. Kein Text davor oder danach. Kein Markdown. Nur JSON.
+{
+  "hasErrors": boolean,
+  "corrections": [
+    {"wrong": "exakter fehlerhafter Text aus der Nachricht", "correct": "korrigierte Version", "explanation": "1-Satz-Erklärung auf Deutsch", "severity": "minor oder major"}
+  ]${isLast ? '' : ',\n  "nextMessage": "deine nächste Nachricht auf Deutsch"'}
+}
+Wenn keine Fehler: "hasErrors": false, "corrections": [].`;
+}
+
+function parseResult(raw) {
+  let clean = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+
+  // Try direct parse
+  try { return JSON.parse(clean); } catch {}
+
+  // Find the outermost { } block robustly (handles preamble/postamble)
+  const start = clean.indexOf('{');
+  const end   = clean.lastIndexOf('}');
+  if (start !== -1 && end > start) {
+    try { return JSON.parse(clean.slice(start, end + 1)); } catch(e) {
+      console.warn('JSON slice parse failed:', e.message, clean.slice(start, end+1).substring(0,200));
+    }
+  }
+
+  // Could not parse at all
+  console.warn('parseResult failed, raw:', raw.substring(0, 300));
+  return null; // signal failure to caller
+}
+
+// ═══════════════════════════════════════════════════
+//  SESSION FLOW
+// ═══════════════════════════════════════════════════
+window.startSession = async function() {
+  ch = { round: 1, log: [], errors: 0, busy: false, corrections: [] };
+  box().innerHTML = '';
+  document.getElementById('hdr-badge').textContent = 'Runde 1 / 5';
+  document.getElementById('hdr-sub').textContent   = 'tippt…';
+  show('s-chat');
+  setInput(false);
+
+  try {
+    addDivider(1);
+    const typ = addTyping();
+    await wait(700);
+    const text = await claude(SYS_START, 'Start');
+    typ.remove();
+
+    const maxMsg = text.trim();
+    ch.log.push({ r:'max', t: maxMsg });
+    addBubble(maxMsg, 'in');
+    document.getElementById('hdr-sub').textContent = 'online';
+    setInput(true);
+  } catch(e) {
+    document.querySelector('.typing-wrap')?.remove();
+    addErrorBubble(e.message, true);
+    console.error(e);
+  }
+};
+
+window.sendMsg = async function() {
+  if (ch.busy) return;
+  const tEl = document.getElementById('txt');
+  const txt = tEl.value.trim();
+  if (!txt) return;
+
+  tEl.value = ''; tEl.style.height = 'auto';
+  ch.busy = true; setInput(false);
+  document.getElementById('hdr-sub').textContent = 'tippt…';
+
+  ch.log.push({ r:'user', t: txt });
+  if (!ch._skipBubble) addBubble(txt, 'out');
+  ch._skipBubble = false;
+
+  const isLast = ch.round >= 5;
+
+  try {
+    const typ = addTyping();
+    let raw = await claude(sysEval(isLast), 'Analysiere jetzt.');
+    typ.remove();
+
+    await wait(150);
+    let res = parseResult(raw);
+
+    // If parsing failed, retry once with an even simpler prompt
+    if (!res) {
+      const typ3 = addTyping();
+      raw = await claude(sysEval(isLast),
+        'Bitte antworte NUR mit reinem JSON, ohne Markdown, ohne Erklärungen. Analysiere jetzt.');
+      typ3.remove();
+      res = parseResult(raw);
+    }
+
+    // If still null, skip correction display and use raw as nextMessage
+    if (!res) {
+      console.error('Could not parse response after retry');
+      res = { hasErrors: false, corrections: [], nextMessage: null };
+    }
+
+    if (res.hasErrors && res.corrections?.length) {
+      addCorrections(res.corrections);
+      ch.corrections.push({ round: ch.round, items: res.corrections, userMsg: ch.log.filter(e=>e.r==='user').slice(-1)[0]?.t || '' });
+    } else {
+      addPerfect();
+    }
+
+    if (isLast) {
+      await wait(700);
+      finishSession();
+    } else {
+      let next = (res.nextMessage || '').trim();
+
+      // If no nextMessage in JSON, fetch it separately
+      if (!next) {
+        const typ2b = addTyping();
+        const SYS_NEXT = `Du bist Max, ein freundlicher deutschsprachiger Gesprächspartner (Niveau B1).
+Bisheriges Gespräch:
+${convLog()}
+Schreibe deine nächste natürliche Gesprächsnachricht auf Deutsch (2-3 Sätze, stelle eine Frage).
+Antworte NUR mit deiner deutschen Nachricht. Kein JSON, keine Erklärungen.`;
+        next = (await claude(SYS_NEXT, 'Schreib jetzt.')).trim();
+        typ2b.remove();
+      }
+
+      ch.log.push({ r:'max', t: next });
+      ch.round++;
+      document.getElementById('hdr-badge').textContent = `Runde ${ch.round} / 5`;
+
+      await wait(700);
+      const typ2 = addTyping();
+      await wait(900 + Math.random() * 600);
+      typ2.remove();
+
+      addDivider(ch.round);
+      addBubble(next, 'in');
+      document.getElementById('hdr-sub').textContent = 'online';
+      ch.busy = false; setInput(true);
+    }
+  } catch(e) {
+    document.querySelector('.typing-wrap')?.remove();
+    addErrorBubble(e.message, false);
+    ch.busy = false; setInput(true);
+    console.error(e);
+  }
+};
+
+function finishSession() {
+  store.sessions.push({ ts: new Date().toISOString(), errors: ch.errors, log: ch.log, corrections: ch.corrections });
+  save();
+  const wn = weekSessions().length;
+
+  document.getElementById('s-err').textContent = ch.errors;
+  document.getElementById('s-wk').textContent  = wn;
+
+  const msgs = [
+    'Du hast alle 5 Runden gemeistert! Morgen wieder! 💪',
+    'Schon 2 Gespräche diese Woche — weiter so! 🔥',
+    'Halbzeit erreicht! Noch 2 Gespräche bis zum Ziel! ⚡',
+    'Fast am Ziel! Nur noch 1 Gespräch diese Woche! 🎯',
+    '🏆 Wochenziel komplett! Du bist großartig!'
+  ];
+  document.getElementById('done-msg').textContent = msgs[Math.min(wn - 1, msgs.length - 1)];
+  document.getElementById('hdr-badge').textContent = `${wn} / 5`;
+  show('s-done');
+}
+
+
+
+function addErrorBubble(msg, isStart) {
+  const isFatal = msg.includes('API-Schlüssel') || msg.includes('Guthaben');
+  const retryFn = isStart ? 'startSession()' : 'retryLast()';
+  const w = document.createElement('div'); w.className = 'msg-wrap in';
+  w.innerHTML = `<div class="bubble in" style="display:flex;flex-direction:column;gap:8px">
+    <span>❌ ${esc(msg)}</span>
+    ${!isFatal ? `<button class="btn-retry" onclick="${retryFn}">↺ Nochmal versuchen</button>` : ''}
+  </div>`;
+  box().appendChild(w); scroll();
+}
+
+window.retryLast = async () => {
+  // Remove only the error bubble (last child)
+  box().querySelector('.msg-wrap:last-child')?.remove();
+  const lastUser = ch.log.filter(e => e.r === 'user').slice(-1)[0];
+  if (!lastUser) { startSession(); return; }
+  // Remove from log so sendMsg re-adds it, but skip DOM bubble (already visible)
+  ch.log = ch.log.slice(0, -1);
+  ch._skipBubble = true; // signal sendMsg to skip addBubble for user msg
+  document.getElementById('txt').value = lastUser.t;
+  await sendMsg();
+};
+
+
+// ═══════════════════════════════════════════════════
+//  INPUT BEHAVIOR
+// ═══════════════════════════════════════════════════
+const txtEl = document.getElementById('txt');
+const btnEl = document.getElementById('btn-send');
+
+txtEl.addEventListener('input', () => {
+  txtEl.style.height = 'auto';
+  txtEl.style.height = Math.min(txtEl.scrollHeight, 100) + 'px';
+  btnEl.disabled = !txtEl.value.trim();
+});
+
+txtEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+});
+
+
+
+
+
+
+
+
+window.dismissCorr = (idx) => {
+  const item = document.getElementById('ci-' + idx);
+  const btn  = document.getElementById('fb-' + idx);
+  if (!item || !btn) return;
+  item.classList.add('dismissed');
+  btn.textContent = '✓ Ignoriert';
+  btn.classList.add('dismissed');
+  btn.disabled = true;
+  // Undo the error count if it was a major correction
+  if (item.classList.contains('major')) {
+    ch.errors = Math.max(0, ch.errors - 1);
+  }
+};
+// ═══════════════════════════════════════════════════
+//  HISTORY
+// ═══════════════════════════════════════════════════
+window.showHistory = () => {
+  renderHistory();
+  document.getElementById('hdr-badge').style.display = 'none';
+  const btn = document.getElementById('btn-hist');
+  if (btn) { btn.textContent = '← Zurück'; btn.dataset.mode = 'back'; }
+  show('s-hist');
+};
+
+window.histBtnClick = () => {
+  const btn = document.getElementById('btn-hist');
+  if (btn && btn.dataset.mode === 'back') goHome();
+  else showHistory();
+};
+
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('de-DE', { weekday:'long', day:'numeric', month:'long' });
+}
+
+function renderHistory() {
+  const el = document.getElementById('hist-body');
+  const sessions = [...store.sessions].reverse().slice(0, 5);
+  if (!sessions.length) {
+    el.innerHTML = '<div class="hist-empty">Noch keine Gespräche gespeichert.</div>'; return;
+  }
+
+  el.innerHTML = sessions.map((s, si) => {
+    const hasMajor = (s.corrections || []).some(c => c.items?.some(i => (i.severity||'major')==='major'));
+    const totalCorr = (s.corrections || []).reduce((a,c)=> a + (c.items?.length||0), 0);
+    const badge = totalCorr === 0
+      ? '<span class="hist-badge-ok">✓ Keine Fehler</span>'
+      : hasMajor
+        ? `<span class="hist-badge-err">${s.errors} Fehler</span>`
+        : `<span class="hist-badge-ok">${totalCorr} Kleinigkeit${totalCorr===1?'':'en'}</span>`;
+
+    // Build conversation rows
+    const log = s.log || [];
+    // Group: for each user message, find matching correction
+    let rows = '';
+    let corrIdx = 0;
+    const corrList = s.corrections || [];
+
+    log.forEach(entry => {
+      if (entry.r === 'max') {
+        rows += `<div class="hist-msg-wrap in"><div class="hist-bubble in">${esc(entry.t)}</div></div>`;
+      } else {
+        rows += `<div class="hist-msg-wrap out"><div class="hist-bubble out">${esc(entry.t)}</div></div>`;
+        // Find correction for this user message
+        const corr = corrList.find(c => c.userMsg === entry.t);
+        if (corr && corr.items?.length) {
+          const onlyMinor = corr.items.every(i => i.severity === 'minor');
+          const items = corr.items.map(i => {
+            const sev = i.severity === 'minor' ? 'minor' : 'major';
+            return `<div class="hist-ci ${sev}"><span class="hw">${esc(i.wrong)}</span><span class="hr">→ ${esc(i.correct)}</span><div class="he">💡 ${esc(i.explanation)}</div></div>`;
+          }).join('');
+          rows += `<div class="hist-corr ${onlyMinor?'only-minor':''}">
+            <div class="hist-corr-hdr">${onlyMinor ? '✏ Kleine Korrekturen' : '✏ Korrekturen'}</div>${items}</div>`;
+        }
+      }
+    });
+
+    const isPerfect = totalCorr === 0;
+    const perfects = ['🌟 Makellos!', '🏆 Perfekt!', '✨ Fehlerfrei!', '🎯 Perfecto!', '🥇 Top!'];
+    const perfMsg  = perfects[si % perfects.length];
+
+    if (isPerfect) {
+      return `<div class="hist-session">
+        <div class="hist-session-hdr perfect">
+          <div>
+            <div class="hist-date">${fmtDate(s.ts)}</div>
+            <div class="hist-meta">${log.filter(e=>e.r==='user').length} Runden · keine Fehler</div>
+          </div>
+          ${badge}
+        </div>
+        <div class="hist-perfect-msg">${perfMsg}</div>
+        <div class="hist-perfect-sub">Du hast diese Session ohne einen einzigen Fehler gemeistert. Fantastisch!</div>
+      </div>`;
+    }
+
+    return `<div class="hist-session">
+      <div class="hist-session-hdr" onclick="toggleHist(${si})">
+        <div>
+          <div class="hist-date">${fmtDate(s.ts)}</div>
+          <div class="hist-meta">${log.filter(e=>e.r==='user').length} Runden · ${totalCorr} Korrektur${totalCorr===1?'':'en'}</div>
+        </div>
+        ${badge}
+      </div>
+      <div class="hist-body-inner" id="hist-${si}">${rows}</div>
+    </div>`;
+  }).join('');
+}
+
+window.toggleHist = (i) => {
+  document.getElementById('hist-' + i)?.classList.toggle('open');
+};
+
+// ═══════════════════════════════════════════════════
+//  NOTIFICATIONS
+// ═══════════════════════════════════════════════════
+let notifTimer = null;
+
+function renderNotifBox() {
+  const on   = localStorage.getItem('dmm_notif') === '1';
+  const time = localStorage.getItem('dmm_notif_time') || '09:00';
+  const perm = Notification.permission;
+  const inp  = document.getElementById('notif-time');
+  const chk  = document.getElementById('notif-on');
+  const hint = document.getElementById('notif-hint');
+  if (inp) inp.value = time;
+  if (chk) chk.classList.toggle('on', on && perm === 'granted');
+  if (hint) {
+    if (perm === 'denied') {
+      hint.textContent = '❌ Benachrichtigungen im Browser blockiert. Bitte in den Browser-Einstellungen erlauben.';
+      hint.className = 'notif-hint bad';
+    } else if (on && perm === 'granted') {
+      hint.textContent = `✅ Erinnerung täglich um ${time} Uhr (Mo–Fr).`;
+      hint.className = 'notif-hint ok';
+    } else {
+      hint.textContent = 'Einschalten für tägliche Erinnerungen (Mo–Fr).';
+      hint.className = 'notif-hint';
+    }
+  }
+}
+
+window.saveNotifTime = () => {
+  const t = document.getElementById('notif-time').value;
+  localStorage.setItem('dmm_notif_time', t);
+  scheduleNotif();
+  renderNotifBox();
+};
+
+window.toggleNotif = async () => {
+  const btn = document.getElementById('notif-on');
+  const wantOn = !btn.classList.contains('on');
+  btn.style.pointerEvents = 'none'; // block double-click during async
+
+  if (wantOn) {
+    let perm = Notification.permission;
+    if (perm === 'default') perm = await Notification.requestPermission();
+    if (perm === 'granted') {
+      localStorage.setItem('dmm_notif', '1');
+      scheduleNotif();
+    } else {
+      localStorage.setItem('dmm_notif', '0');
+    }
+  } else {
+    localStorage.setItem('dmm_notif', '0');
+    if (notifTimer) { clearTimeout(notifTimer); notifTimer = null; }
+  }
+
+  btn.style.pointerEvents = '';
+  renderNotifBox();
+};
+
+function msUntil(hhmm) {
+  const [h, m] = hhmm.split(':').map(Number);
+  const now  = new Date();
+  const next = new Date();
+  next.setHours(h, m, 0, 0);
+  if (next <= now) next.setDate(next.getDate() + 1);
+  // skip weekend
+  while ([0, 6].includes(next.getDay())) next.setDate(next.getDate() + 1);
+  return next - now;
+}
+
+function scheduleNotif() {
+  if (notifTimer) clearTimeout(notifTimer);
+  if (localStorage.getItem('dmm_notif') !== '1') return;
+  if (Notification.permission !== 'granted') return;
+  const time = localStorage.getItem('dmm_notif_time') || '09:00';
+  const ms   = msUntil(time);
+  notifTimer = setTimeout(() => {
+    if (!doneToday()) {
+      new Notification('🇩🇪 Max wartet auf dich!', {
+        body: 'Zeit für dein Deutsch-Training heute. Klick zum Starten!',
+        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🧑‍🏫</text></svg>'
+      });
+    }
+    scheduleNotif(); // reschedule for next day
+  }, ms);
+}
+
+// check on load if notification is due right now (app was closed at reminder time)
+function checkMissedNotif() {
+  if (localStorage.getItem('dmm_notif') !== '1') return;
+  if (Notification.permission !== 'granted') return;
+  if (doneToday()) return;
+  const day = new Date().getDay();
+  if (day === 0 || day === 6) return;
+  const time = localStorage.getItem('dmm_notif_time') || '09:00';
+  const [h, m] = time.split(':').map(Number);
+  const now = new Date();
+  const tod = new Date(); tod.setHours(h, m, 0, 0);
+  const end = new Date(tod); end.setHours(h + 3, m, 0, 0);
+  if (now >= tod && now <= end) {
+    new Notification('🇩🇪 Max wartet auf dich!', {
+      body: 'Zeit für dein Deutsch-Training heute!',
+      icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🧑‍🏫</text></svg>'
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+renderHome();
+renderNotifBox();
+checkMissedNotif();
+scheduleNotif();
+show('s-home');
+
+</script>
+</body>
+</html>
