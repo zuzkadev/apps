@@ -883,7 +883,7 @@ function clearStatus() {
 }
 
 async function claude(system, userMsg) {
-  const models = await getFreeModels();
+  const models = (await getFreeModels()).slice(0, 5);
   setStatus('⏳ Warte auf Antwort…');
 
   let res;
