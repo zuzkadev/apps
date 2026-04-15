@@ -46,6 +46,7 @@ body {
   overflow: hidden;
   border-radius: 20px;
   box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08);
+  position: relative;
 }
 
 /* ── HEADER ── */
@@ -605,6 +606,65 @@ mark.diff-right {
   cursor: pointer; font-family: var(--font); transition: all 0.2s;
 }
 .btn-vocab-home:hover { background: rgba(7,94,84,0.07); border-color: var(--wa-dark); }
+
+/* ── VOCAB SAVE BUTTON ON BUBBLE ── */
+.bubble-vocab-btn {
+  background: rgba(255,255,255,0.92); border: 1px solid var(--wa-border);
+  border-radius: 20px; padding: 3px 10px 3px 7px;
+  font-size: 12px; color: var(--wa-muted); cursor: pointer;
+  font-family: var(--font); transition: all 0.15s;
+  align-self: flex-start; margin-top: 3px;
+  display: flex; align-items: center; gap: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+}
+.bubble-vocab-btn:hover { background: var(--wa-white); color: var(--wa-dark); border-color: var(--wa-mid); }
+
+/* ── VOCAB BOTTOM SHEET PANEL ── */
+.vocab-panel-wrap {
+  display: none; position: absolute; inset: 0;
+  background: rgba(0,0,0,0.35); z-index: 50;
+  align-items: flex-end;
+}
+.vocab-panel-wrap.open { display: flex; }
+.vocab-panel {
+  background: var(--wa-white);
+  border-radius: 20px 20px 0 0;
+  padding: 6px 16px 32px;
+  width: 100%;
+  display: flex; flex-direction: column; gap: 11px;
+  max-height: 90%;
+  overflow-y: auto;
+}
+.vocab-panel-handle {
+  width: 36px; height: 4px;
+  background: var(--wa-border); border-radius: 4px;
+  margin: 6px auto 6px;
+  flex-shrink: 0;
+}
+.vocab-panel-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.vocab-panel-title { font-size: 15px; font-weight: 700; color: var(--wa-text); }
+.vocab-panel-close {
+  background: none; border: none; cursor: pointer;
+  color: var(--wa-muted); font-size: 26px; padding: 0 2px; line-height: 1;
+  transition: color 0.15s;
+}
+.vocab-panel-close:hover { color: var(--wa-text); }
+#vp-meaning { resize: none; min-height: 80px; line-height: 1.5; }
+.btn-vocab-gen {
+  background: var(--wa-dark); color: white; border: none;
+  border-radius: 10px; padding: 11px; font-size: 14px; font-weight: 600;
+  cursor: pointer; font-family: var(--font); transition: background 0.15s;
+}
+.btn-vocab-gen:hover:not(:disabled) { background: var(--wa-mid); }
+.btn-vocab-gen:disabled { background: #AEBAC1; cursor: not-allowed; }
+.btn-vocab-save-panel {
+  background: var(--wa-green); color: white; border: none;
+  border-radius: 10px; padding: 11px; font-size: 14px; font-weight: 600;
+  cursor: pointer; font-family: var(--font); transition: background 0.15s;
+}
+.btn-vocab-save-panel:hover { filter: brightness(1.07); }
 </style>
 </head>
 <body>
@@ -704,6 +764,24 @@ mark.diff-right {
         <button class="btn-vocab-save" id="btn-vocab-save" disabled onclick="addVocabEntry()">Eintrag speichern</button>
       </div>
       <div class="vocab-list" id="vocab-list"></div>
+    </div>
+  </div>
+
+  <!-- ═══ VOCAB PANEL (bottom sheet, opened from chat) ═══ -->
+  <div class="vocab-panel-wrap" id="vocab-panel-wrap" onclick="closeVocabPanelBackdrop(event)">
+    <div class="vocab-panel">
+      <div class="vocab-panel-handle"></div>
+      <div class="vocab-panel-hdr">
+        <span class="vocab-panel-title">📖 Zum Wörterbuch hinzufügen</span>
+        <button class="vocab-panel-close" onclick="closeVocabPanel()">×</button>
+      </div>
+      <input class="vocab-inp" id="vp-word" type="text"
+             placeholder="Wort oder Ausdruck aus Maxʼ Nachricht…" oninput="vpWordInput()">
+      <button class="btn-vocab-gen" id="btn-vocab-gen" onclick="generateVocabMeaning()" disabled>Bedeutung generieren →</button>
+      <div id="vp-meaning-wrap" style="display:none; flex-direction:column; gap:11px">
+        <textarea class="vocab-inp" id="vp-meaning" placeholder="Bedeutung…"></textarea>
+        <button class="btn-vocab-save-panel" onclick="saveFromPanel()">In Wörterbuch speichern ✓</button>
+      </div>
     </div>
   </div>
 </div>
@@ -834,7 +912,10 @@ function addDivider(round) {
 function addBubble(text, dir) {
   const w = document.createElement('div'); w.className = `msg-wrap ${dir}`;
   const checks = dir === 'out' ? '<span class="checks">✓✓</span>' : '';
-  w.innerHTML = `<div class="bubble ${dir}">${esc(text)}<span class="btime">${hhmm()}${checks}</span></div>`;
+  const vocabBtn = dir === 'in'
+    ? `<button class="bubble-vocab-btn" onclick="openVocabPanel()">📖 Merken</button>`
+    : '';
+  w.innerHTML = `<div class="bubble ${dir}">${esc(text)}<span class="btime">${hhmm()}${checks}</span></div>${vocabBtn}`;
   box().appendChild(w); scroll();
 }
 
@@ -1468,6 +1549,68 @@ function checkMissedNotif() {
 const VOCAB_KEY = 'dmm_vocab';
 let vocab = (() => { try { return JSON.parse(localStorage.getItem(VOCAB_KEY)) || []; } catch { return []; } })();
 const saveVocab = () => localStorage.setItem(VOCAB_KEY, JSON.stringify(vocab));
+
+// ── Vocab panel (add from chat bubble) ──
+window.openVocabPanel = () => {
+  document.getElementById('vp-word').value = '';
+  document.getElementById('vp-meaning').value = '';
+  document.getElementById('vp-meaning-wrap').style.display = 'none';
+  document.getElementById('btn-vocab-gen').disabled = true;
+  document.getElementById('btn-vocab-gen').textContent = 'Bedeutung generieren →';
+  document.getElementById('vocab-panel-wrap').classList.add('open');
+  setTimeout(() => document.getElementById('vp-word').focus(), 50);
+};
+
+window.closeVocabPanel = () => {
+  document.getElementById('vocab-panel-wrap').classList.remove('open');
+};
+
+window.closeVocabPanelBackdrop = (e) => {
+  if (e.target === document.getElementById('vocab-panel-wrap')) closeVocabPanel();
+};
+
+window.vpWordInput = () => {
+  const w = document.getElementById('vp-word').value.trim();
+  document.getElementById('btn-vocab-gen').disabled = !w;
+  document.getElementById('vp-meaning-wrap').style.display = 'none';
+};
+
+window.generateVocabMeaning = async () => {
+  const word = document.getElementById('vp-word').value.trim();
+  if (!word) return;
+  const genBtn = document.getElementById('btn-vocab-gen');
+  genBtn.disabled = true;
+  genBtn.textContent = '⏳ Generiere…';
+  document.getElementById('vp-meaning-wrap').style.display = 'none';
+
+  const SYS_DICT = `Du bist ein einsprachiges Deutsch-Wörterbuch. Erkläre das Wort oder die Wendung präzise in einem einzigen deutschen Satz, wie in einem Wörterbuch. Keine Übersetzung, nur Deutsch. Antworte NUR mit der Erklärung, ohne das Wort selbst am Anfang zu wiederholen.`;
+  try {
+    const meaning = await claude(SYS_DICT, word);
+    document.getElementById('vp-meaning').value = meaning.trim();
+    const wrap = document.getElementById('vp-meaning-wrap');
+    wrap.style.display = 'flex';
+    wrap.style.flexDirection = 'column';
+    wrap.style.gap = '11px';
+  } catch(e) {
+    document.getElementById('vp-meaning').value = '';
+    const wrap = document.getElementById('vp-meaning-wrap');
+    wrap.style.display = 'flex';
+    wrap.style.flexDirection = 'column';
+    wrap.style.gap = '11px';
+  } finally {
+    genBtn.disabled = false;
+    genBtn.textContent = 'Bedeutung neu generieren →';
+  }
+};
+
+window.saveFromPanel = () => {
+  const word    = document.getElementById('vp-word').value.trim();
+  const meaning = document.getElementById('vp-meaning').value.trim();
+  if (!word || !meaning) return;
+  vocab.unshift({ id: Math.random().toString(36).slice(2), word, meaning, addedAt: new Date().toISOString() });
+  saveVocab();
+  closeVocabPanel();
+};
 
 window.showVocab = () => {
   renderVocab();
