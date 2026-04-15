@@ -547,6 +547,64 @@ mark.diff-right {
   transition: background 0.15s; margin-top: 6px;
 }
 .btn-retry:hover { background: var(--wa-mid); }
+
+/* ═══════════════ VOCAB ═══════════════ */
+.vocab-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.vocab-add-bar {
+  background: var(--wa-white);
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--wa-border);
+  display: flex; flex-direction: column; gap: 9px;
+  flex-shrink: 0;
+}
+.vocab-inp {
+  border: 1.5px solid var(--wa-border); border-radius: 10px;
+  padding: 9px 12px; font-size: 14px; font-family: var(--font);
+  color: var(--wa-text); outline: none; background: #FAFAFA;
+  transition: border-color 0.2s; width: 100%;
+}
+.vocab-inp:focus { border-color: var(--wa-mid); }
+#vocab-meaning-inp { resize: none; min-height: 68px; line-height: 1.5; }
+.btn-vocab-save {
+  background: var(--wa-dark); color: white; border: none;
+  border-radius: 10px; padding: 10px; font-size: 14px; font-weight: 600;
+  cursor: pointer; font-family: var(--font); transition: background 0.15s; width: 100%;
+}
+.btn-vocab-save:hover:not(:disabled) { background: var(--wa-mid); }
+.btn-vocab-save:disabled { background: #AEBAC1; cursor: not-allowed; }
+.vocab-list {
+  flex: 1; overflow-y: auto;
+  background: var(--wa-chat-bg);
+  padding: 12px 10px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.vocab-entry {
+  background: var(--wa-white); border-radius: 14px;
+  padding: 13px 44px 13px 14px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  position: relative;
+}
+.vocab-word { font-size: 15px; font-weight: 700; color: var(--wa-dark); margin-bottom: 5px; }
+.vocab-meaning { font-size: 13.5px; color: var(--wa-text); line-height: 1.6; }
+.vocab-date { font-size: 11px; color: var(--wa-muted); margin-top: 6px; }
+.vocab-del {
+  position: absolute; top: 50%; right: 12px; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  color: #AEBAC1; font-size: 22px; padding: 4px; line-height: 1;
+  transition: color 0.15s;
+}
+.vocab-del:hover { color: #DC2626; }
+.vocab-empty {
+  text-align: center; color: var(--wa-muted);
+  font-size: 14px; padding: 60px 24px; line-height: 1.8;
+}
+.btn-vocab-home {
+  background: transparent; border: 1.5px solid rgba(7,94,84,0.25);
+  color: var(--wa-dark); border-radius: 50px;
+  padding: 11px 32px; font-size: 14px; font-weight: 600;
+  cursor: pointer; font-family: var(--font); transition: all 0.2s;
+}
+.btn-vocab-home:hover { background: rgba(7,94,84,0.07); border-color: var(--wa-dark); }
 </style>
 </head>
 <body>
@@ -597,6 +655,7 @@ mark.diff-right {
 
       <div id="home-info"></div>
       <button class="btn-start" id="btn-start" onclick="startSession()">Gespräch starten →</button>
+      <button class="btn-vocab-home" onclick="showVocab()">📖 Mein Wörterbuch</button>
     </div>
   </div>
 
@@ -632,6 +691,20 @@ mark.diff-right {
   <!-- ═══ HISTORY ═══ -->
   <div id="s-hist" class="screen hidden">
     <div class="hist-body" id="hist-body"></div>
+  </div>
+
+  <!-- ═══ VOCAB ═══ -->
+  <div id="s-vocab" class="screen hidden">
+    <div class="vocab-body">
+      <div class="vocab-add-bar">
+        <input class="vocab-inp" id="vocab-word-inp" type="text"
+               placeholder="Wort oder Ausdruck auf Deutsch…" oninput="updateVocabBtn()">
+        <textarea class="vocab-inp" id="vocab-meaning-inp"
+                  placeholder="Bedeutung auf Deutsch erklären…" oninput="updateVocabBtn()"></textarea>
+        <button class="btn-vocab-save" id="btn-vocab-save" disabled onclick="addVocabEntry()">Eintrag speichern</button>
+      </div>
+      <div class="vocab-list" id="vocab-list"></div>
+    </div>
   </div>
 </div>
 
@@ -684,7 +757,7 @@ const hhmm = () => new Date().toLocaleTimeString('de-DE', { hour:'2-digit', minu
 //  NAVIGATION
 // ═══════════════════════════════════════════════════
 function show(id) {
-  ['s-home','s-chat','s-done','s-hist'].forEach(s =>
+  ['s-home','s-chat','s-done','s-hist','s-vocab'].forEach(s =>
     document.getElementById(s).classList.toggle('hidden', s !== id));
 }
 window.goHome = () => {
@@ -1382,6 +1455,65 @@ function checkMissedNotif() {
       icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🧑‍🏫</text></svg>'
     });
   }
+}
+
+// ═══════════════════════════════════════════════════
+//  VOCAB (Mein Wörterbuch)
+// ═══════════════════════════════════════════════════
+const VOCAB_KEY = 'dmm_vocab';
+let vocab = (() => { try { return JSON.parse(localStorage.getItem(VOCAB_KEY)) || []; } catch { return []; } })();
+const saveVocab = () => localStorage.setItem(VOCAB_KEY, JSON.stringify(vocab));
+
+window.showVocab = () => {
+  renderVocab();
+  document.getElementById('hdr-badge').style.display = 'none';
+  const btn = document.getElementById('btn-hist');
+  if (btn) { btn.textContent = '← Zurück'; btn.dataset.mode = 'back'; }
+  show('s-vocab');
+};
+
+window.updateVocabBtn = () => {
+  const w = document.getElementById('vocab-word-inp').value.trim();
+  const m = document.getElementById('vocab-meaning-inp').value.trim();
+  document.getElementById('btn-vocab-save').disabled = !(w && m);
+};
+
+window.addVocabEntry = () => {
+  const wordEl    = document.getElementById('vocab-word-inp');
+  const meaningEl = document.getElementById('vocab-meaning-inp');
+  const word    = wordEl.value.trim();
+  const meaning = meaningEl.value.trim();
+  if (!word || !meaning) return;
+  vocab.unshift({ id: Math.random().toString(36).slice(2), word, meaning, addedAt: new Date().toISOString() });
+  saveVocab();
+  wordEl.value = ''; meaningEl.value = '';
+  document.getElementById('btn-vocab-save').disabled = true;
+  wordEl.focus();
+  renderVocab();
+};
+
+window.deleteVocabEntry = (id) => {
+  vocab = vocab.filter(e => e.id !== id);
+  saveVocab();
+  renderVocab();
+};
+
+function renderVocab() {
+  const el = document.getElementById('vocab-list');
+  if (!el) return;
+  if (!vocab.length) {
+    el.innerHTML = '<div class="vocab-empty">Noch keine Einträge gespeichert.<br>Füge oben dein erstes Wort hinzu! 📖</div>';
+    return;
+  }
+  const fmtDate = iso => new Date(iso).toLocaleDateString('de-DE', { day:'numeric', month:'long', year:'numeric' });
+  el.innerHTML = vocab.map(e => `
+    <div class="vocab-entry">
+      <button class="vocab-del" onclick="deleteVocabEntry('${e.id}')" title="Löschen">×</button>
+      <div class="vocab-word">${esc(e.word)}</div>
+      <div class="vocab-meaning">${esc(e.meaning)}</div>
+      <div class="vocab-date">Hinzugefügt am ${fmtDate(e.addedAt)}</div>
+    </div>
+  `).join('');
 }
 
 // ═══════════════════════════════════════════════════
